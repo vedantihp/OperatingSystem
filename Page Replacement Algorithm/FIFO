@@ -1,0 +1,54 @@
+#include <iostream>
+using namespace std;
+int main()
+{
+ int n; // number of pages in reference string
+ cout << "Enter the number of pages in reference string: ";
+ cin >> n;
+ int ref_string[n]; // array to hold reference string
+ cout << "Enter the reference string: ";
+ for (int i = 0; i < n; i++)
+ {
+ cin >> ref_string[i];
+ }
+ int num_frames; // number of frames in physical memory
+ cout << "Enter the number of frames in physical memory: ";
+ cin >> num_frames;
+ int frames[num_frames]; // array to hold frames in physical memory
+ int frame_index = 0; // index of next available frame in frames array
+ int page_faults = 0; // counter for page faults
+ // initialize frames array to -1 to indicate that all frames are empty
+for (int i = 0; i < num_frames; i++)
+ {
+ frames[i] = -1;
+ }
+ // iterate through reference string
+ for (int i = 0; i < n; i++)
+ {
+ bool page_found = false;
+ // check if page is already in physical memory
+ for (int j = 0; j < num_frames; j++)
+ {
+ if (frames[j] == ref_string[i])
+ {
+ page_found = true;
+ break;
+ }
+ }
+ // if page is not in physical memory, replace oldest page with current page
+ if (!page_found)
+ {
+ frames[frame_index] = ref_string[i];
+ frame_index = (frame_index + 1) % num_frames;
+ page_faults++;
+ }
+ // print current state of physical memory
+ for (int j = 0; j < num_frames; j++)
+ {
+ cout << frames[j] << " ";
+ }
+ cout << endl;
+ }
+ cout << "Total number of page faults: " << page_faults << endl;
+ return 0;
+}
