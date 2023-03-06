@@ -1,0 +1,66 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+
+struct Process {
+    int pid; // Process ID
+    int bt;  // Burst Time
+    int art; // Arrival Time
+};
+
+void findWaitingTime(Process processes[], int n, int wt[], int quantum) {
+    queue<int> q;
+    int rem_bt[n];
+    for (int i = 0; i < n; i++) {
+        rem_bt[i] = processes[i].bt;
+    }
+    int t = 0;
+    while (true) {
+        bool done = true;
+        for (int i = 0; i < n; i++) {
+            if (rem_bt[i] > 0) {
+                done = false;
+                if (rem_bt[i] > quantum) {
+                    t += quantum;
+                    rem_bt[i] -= quantum;
+                } else {
+                    t += rem_bt[i];
+                    wt[i] = t - processes[i].bt - processes[i].art;
+                    rem_bt[i] = 0;
+                }
+                q.push(i);
+            }
+        }
+        if (done) {
+            break;
+        }
+    }
+}
+
+void findTurnAroundTime(Process processes[], int n, int wt[], int tat[]) {
+    for (int i = 0; i < n; i++) {
+        tat[i] = processes[i].bt + wt[i];
+    }
+}
+
+void findAvgTime(Process processes[], int n, int quantum) {
+    int wt[n], tat[n], total_wt = 0, total_tat = 0;
+    findWaitingTime(processes, n, wt, quantum);
+    findTurnAroundTime(processes, n, wt, tat);
+    cout << "Processes " << " Burst time " << " Waiting time " << " Turn around time\n";
+    for (int i = 0; i < n; i++) {
+        total_wt += wt[i];
+        total_tat += tat[i];
+        cout << " " << processes[i].pid << "\t\t" << processes[i].bt << "\t\t " << wt[i] << "\t\t " << tat[i] << endl;
+    }
+    cout << "Average waiting time = " << (float)total_wt / (float)n << endl;
+    cout << "Average turn around time = " << (float)total_tat / (float)n << endl;
+}
+
+int main() {
+    Process processes[] = {{1, 10, 0}, {2, 5, 1}, {3, 8, 2}};
+    int n = sizeof(processes) / sizeof(processes[0]);
+    int quantum = 2;
+    findAvgTime(processes, n, quantum);
+    return 0;
+}
