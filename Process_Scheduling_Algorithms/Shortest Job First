@@ -1,0 +1,47 @@
+#include<iostream>
+using namespace std;
+
+int main() {
+    int n, i, j, temp;
+    float avg_waiting_time = 0, avg_turnaround_time = 0;
+    cout<<"Enter the number of processes: ";
+    cin>>n;
+    int burst_time[n], process_id[n], waiting_time[n], turnaround_time[n];
+    for(i = 0; i < n; i++) {
+        cout<<"Enter the burst time for process "<<i+1<<": ";
+        cin>>burst_time[i];
+        process_id[i] = i+1;
+    }
+    // sorting the burst time in ascending order
+    for(i = 0; i < n; i++) {
+        for(j = i+1; j < n; j++) {
+            if(burst_time[i] > burst_time[j]) {
+                temp = burst_time[i];
+                burst_time[i] = burst_time[j];
+                burst_time[j] = temp;
+                temp = process_id[i];
+                process_id[i] = process_id[j];
+                process_id[j] = temp;
+            }
+        }
+    }
+    waiting_time[0] = 0;
+    for(i = 1; i < n; i++) {
+        waiting_time[i] = 0;
+        for(j = 0; j < i; j++)
+            waiting_time[i] += burst_time[j];
+        avg_waiting_time += waiting_time[i];
+    }
+    avg_waiting_time /= n;
+    for(i = 0; i < n; i++) {
+        turnaround_time[i] = burst_time[i] + waiting_time[i];
+        avg_turnaround_time += turnaround_time[i];
+    }
+    avg_turnaround_time /= n;
+    cout<<"\nProcess ID\tBurst Time\tWaiting Time\tTurnaround Time\n";
+    for(i = 0; i < n; i++)
+        cout<<process_id[i]<<"\t\t"<<burst_time[i]<<"\t\t"<<waiting_time[i]<<"\t\t"<<turnaround_time[i]<<endl;
+    cout<<"\nAverage waiting time: "<<avg_waiting_time<<endl;
+    cout<<"Average turnaround time: "<<avg_turnaround_time<<endl;
+    return 0;
+}
